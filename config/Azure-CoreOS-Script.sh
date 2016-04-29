@@ -26,23 +26,23 @@ vm_size="Standard_D1_v2" #VM Sizes can be listed by using `azure vm sizes --loca
 #Azure CLI------------------------------------------------------------------------------------
 #Azure Resource Group setup
 azure config mode arm
-#azure group create --location $location $resourcegroup
-##Azure Storage account setup
-#azure storage account create --location $location --resource-group $resourcegroup --type lrs $storageacname
-##Azure Network Security Group setup
-#azure network nsg create --resource-group $resourcegroup --location $location --name $networksecgroup
-##Virtual network and subnet setup
-#azure network vnet create --location $location --address-prefixes $vnetaddr --resource-group $resourcegroup --name $vnetname
-#azure network vnet subnet create --address-prefix $subnetaddr --resource-group $resourcegroup --vnet-name $vnetname --name $subnetname --network-security-group-name $networksecgroup
-##Public IP for VMs (can create SSH inbound rules to access these if required)
-#azure network public-ip create --resource-group $resourcegroup --location $location --name "$vm01_name"-pub-ip
-#azure network public-ip create --resource-group $resourcegroup --location $location --name "$vm02_name"-pub-ip
-#azure network public-ip create --resource-group $resourcegroup --location $location --name "$vm03_name"-pub-ip
-##Virtual Nics with private IPs for CoreOS VMs
-#azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$vm01_name"-priv-nic --private-ip-address $vm_static_IP1 --network-security-group-name $networksecgroup --public-ip-name "$vm01_name"-pub-ip
-#azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$vm02_name"-priv-nic --private-ip-address $vm_static_IP2 --network-security-group-name $networksecgroup --public-ip-name "$vm02_name"-pub-ip
-#azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$vm03_name"-priv-nic --private-ip-address $vm_static_IP3 --network-security-group-name $networksecgroup --public-ip-name "$vm03_name"-pub-ip
-##Create 3 CoreOS-Stable VMs, fly in cloud-config file, also provide ssh public key to connect with in future
+azure group create --location $location $resourcegroup
+#Azure Storage account setup
+azure storage account create --location $location --resource-group $resourcegroup --type lrs $storageacname
+#Azure Network Security Group setup
+azure network nsg create --resource-group $resourcegroup --location $location --name $networksecgroup
+#Virtual network and subnet setup
+azure network vnet create --location $location --address-prefixes $vnetaddr --resource-group $resourcegroup --name $vnetname
+azure network vnet subnet create --address-prefix $subnetaddr --resource-group $resourcegroup --vnet-name $vnetname --name $subnetname --network-security-group-name $networksecgroup
+#Public IP for VMs (can create SSH inbound rules to access these if required)
+azure network public-ip create --resource-group $resourcegroup --location $location --name "$vm01_name"-pub-ip
+azure network public-ip create --resource-group $resourcegroup --location $location --name "$vm02_name"-pub-ip
+azure network public-ip create --resource-group $resourcegroup --location $location --name "$vm03_name"-pub-ip
+#Virtual Nics with private IPs for CoreOS VMs
+azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$vm01_name"-priv-nic --private-ip-address $vm_static_IP1 --network-security-group-name $networksecgroup --public-ip-name "$vm01_name"-pub-ip
+azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$vm02_name"-priv-nic --private-ip-address $vm_static_IP2 --network-security-group-name $networksecgroup --public-ip-name "$vm02_name"-pub-ip
+azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$vm03_name"-priv-nic --private-ip-address $vm_static_IP3 --network-security-group-name $networksecgroup --public-ip-name "$vm03_name"-pub-ip
+#Create 3 CoreOS-Stable VMs, fly in cloud-config file, also provide ssh public key to connect with in future
 azure vm create --custom-data=ampelos-01-cloud-config.yaml --ssh-publickey-file=ampelos-01.pub --admin-username core --name $vm01_name --vm-size $vm_size --resource-group $resourcegroup --vnet-subnet-name $subnetname --os-type linux --availset-name $availgroup --location $location --image-urn $coreos_image --nic-names "$vm01_name"-priv-nic --storage-account-name $storageacname
 azure vm create --custom-data=ampelos-02-cloud-config.yaml --ssh-publickey-file=ampelos-01.pub --admin-username core --name $vm02_name --vm-size $vm_size --resource-group $resourcegroup --vnet-subnet-name $subnetname --os-type linux --availset-name $availgroup --location $location --image-urn $coreos_image --nic-names "$vm02_name"-priv-nic --storage-account-name $storageacname
 azure vm create --custom-data=ampelos-03-cloud-config.yaml --ssh-publickey-file=ampelos-01.pub --admin-username core --name $vm03_name --vm-size $vm_size --resource-group $resourcegroup --vnet-subnet-name $subnetname --os-type linux --availset-name $availgroup --location $location --image-urn $coreos_image --nic-names "$vm03_name"-priv-nic --storage-account-name $storageacname
