@@ -7,7 +7,7 @@ I needed a vacation so I took a week off and went to Los Angeles to hang out wit
 -
 
 ##### CoreOS?
-This is a top of the line, cutting edge server operating system. CoreOS clustered with Fleet means you can sustain a VPS failure, DDOS attack, and keep your applications containerized and backed up within a Docker registry that will sit in the Azure storage environment genrated in this script.
+This is a top of the line, cutting edge server operating system. CoreOS clustered with Fleet means you can sustain a VPS failure, DDOS attack, and keep your applications containerized and backed up within a Docker registry that will sit in the Azure storage environment generated in this script.
 
 This repository is Felix's bag of tricks.
 
