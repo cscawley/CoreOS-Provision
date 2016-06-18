@@ -21,7 +21,7 @@ vm_static_IP2="10.1.0.52"
 vm03_name="ampelos-03"
 vm_static_IP3="10.1.0.53"
 coreos_image="coreos:coreos:Stable:835.9.0" #CoreOS image to use
-vm_size="Standard_D1_v2" #VM Sizes can be listed by using `azure vm sizes --location YourAzureDCLocaitonOfChoice`
+vm_size="Standard_A0" #VM Sizes can be listed by using `azure vm sizes --location YourAzureDCLocaitonOfChoice`
 #---------------------------------------------------------------------------------------------
 #Azure CLI------------------------------------------------------------------------------------
 #Azure Resource Group setup
