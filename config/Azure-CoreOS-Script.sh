@@ -20,12 +20,14 @@ vm02_name="ampelos-02"
 vm_static_IP2="10.1.0.52"
 vm03_name="ampelos-03"
 vm_static_IP3="10.1.0.53"
-coreos_image="coreos:coreos:Stable:1010.5.0" #CoreOS image to use `azure vm image list-publishers` `azure vm image list`
+coreos_image="coreos:coreos:Stable:1010.5.0" #CoreOS image to use `azure vm image list southcentralus canonical ubuntuserver` `azure vm image list`
 vm_size="Standard_A0" #VM Sizes can be listed by using `azure vm sizes --location YourAzureDCLocaitonOfChoice`
 #Load Balancer VM name and private IP for each
-lb01_name="ampelos-00"
+lb01_name="ampelos-lb1"
 lbvm_static_IP1="10.1.0.50"
-lbos_image="Canonical:UbuntuServer:14.04.4-LTS:14.04.201606270" #Ubuntu image to use `azure vm image list-publishers` `azure vm image list`
+vc01_name="ampelos-vc1"
+vcvm_static_IP1="10.1.0.49"
+lbos_image="Canonical:UbuntuServer:16.04.0-LTS:16.04.201604203" #Ubuntu image to use `azure vm image list southcentralus canonical ubuntuserver` `azure vm image list`
 lbvm_size="Standard_A0" #VM Sizes can be listed by using `azure vm sizes --location YourAzureDCLocaitonOfChoice`
 #---------------------------------------------------------------------------------------------
 #Azure CLI------------------------------------------------------------------------------------
@@ -43,17 +45,22 @@ azure network vnet subnet create --address-prefix $subnetaddr --resource-group $
 azure network public-ip create --resource-group $resourcegroup --location $location --name "$vm01_name"-pub-ip
 azure network public-ip create --resource-group $resourcegroup --location $location --name "$vm02_name"-pub-ip
 azure network public-ip create --resource-group $resourcegroup --location $location --name "$vm03_name"-pub-ip
-azure network public-ip create --resource-group $resourcegroup --location $location --name "$lbvm01_name"-pub-ip
+azure network public-ip create --resource-group $resourcegroup --location $location --name "$lb01_name"-pub-ip
+azure network public-ip create --resource-group $resourcegroup --location $location --name "$vc01_name"-pub-ip
 #Virtual Nics with private IPs for CoreOS VMs
 azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$vm01_name"-priv-nic --private-ip-address $vm_static_IP1 --network-security-group-name $networksecgroup --public-ip-name "$vm01_name"-pub-ip
 azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$vm02_name"-priv-nic --private-ip-address $vm_static_IP2 --network-security-group-name $networksecgroup --public-ip-name "$vm02_name"-pub-ip
 azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$vm03_name"-priv-nic --private-ip-address $vm_static_IP3 --network-security-group-name $networksecgroup --public-ip-name "$vm03_name"-pub-ip
 #Virtual Nics with private IPs for load balance VMs
-azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$vm03_name"-priv-nic --private-ip-address $vm_static_IP3 --network-security-group-name $networksecgroup --public-ip-name "$vm03_name"-pub-ip
+azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$lb01_name"-priv-nic --private-ip-address $lbvm_static_IP1 --network-security-group-name $networksecgroup --public-ip-name "$lb01_name"-pub-ip
+#Virtual Nics with private IPs for VCS/Registry
+azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$vc01_name"-priv-nic --private-ip-address $vcvm_static_IP1 --network-security-group-name $networksecgroup --public-ip-name "$vc01_name"-pub-ip
 #Create 3 CoreOS-Stable VMs, fly in cloud-config file, also provide ssh public key to connect with in future
 azure vm create --custom-data=ampelos-01-cloud-config.yaml --ssh-publickey-file=ampelos-01.pub --admin-username core --name $vm01_name --vm-size $vm_size --resource-group $resourcegroup --vnet-subnet-name $subnetname --os-type linux --availset-name $availgroup --location $location --image-urn $coreos_image --nic-names "$vm01_name"-priv-nic --storage-account-name $storageacname
 azure vm create --custom-data=ampelos-02-cloud-config.yaml --ssh-publickey-file=ampelos-01.pub --admin-username core --name $vm02_name --vm-size $vm_size --resource-group $resourcegroup --vnet-subnet-name $subnetname --os-type linux --availset-name $availgroup --location $location --image-urn $coreos_image --nic-names "$vm02_name"-priv-nic --storage-account-name $storageacname
 azure vm create --custom-data=ampelos-03-cloud-config.yaml --ssh-publickey-file=ampelos-01.pub --admin-username core --name $vm03_name --vm-size $vm_size --resource-group $resourcegroup --vnet-subnet-name $subnetname --os-type linux --availset-name $availgroup --location $location --image-urn $coreos_image --nic-names "$vm03_name"-priv-nic --storage-account-name $storageacname
 #Create an ubuntu server to install HAProxy
-azure vm create --ssh-publickey-file=ampelos-01.pub --admin-username core --name $lb01_name --lbvm-size $lbvm_size --resource-group $resourcegroup --vnet-subnet-name $subnetname --os-type linux --availset-name $availgroup --location $location --image-urn $lbos_image --nic-names "$lbvm01_name"-priv-nic --storage-account-name $storageacname
+azure vm create --ssh-publickey-file=ampelos-01.pub --admin-username core --name $lb01_name --vm-size $lbvm_size --resource-group $resourcegroup --vnet-subnet-name $subnetname --os-type linux --availset-name $availgroup --location $location --image-urn $lbos_image --nic-names "$lb01_name"-priv-nic --storage-account-name $storageacname
+#Create an ubuntu server to install the VCS/Registry
+azure vm create --ssh-publickey-file=ampelos-01.pub --admin-username core --name $vc01_name --vm-size $lbvm_size --resource-group $resourcegroup --vnet-subnet-name $subnetname --os-type linux --availset-name $availgroup --location $location --image-urn $lbos_image --nic-names "$vc01_name"-priv-nic --storage-account-name $storageacname
 #Azure CLI------------------------------------------------------------------------------------

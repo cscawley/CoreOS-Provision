@@ -1,3 +1,40 @@
+replace SSH socket for CoreOS
+
+```
+sudo cp /usr/lib/systemd/system/sshd.socket /etc/systemd/system/sshd.socket
+```
+
+```
+sudo vi /etc/systemd/system/sshd.socket
+```
+
+```
+[Unit]
+Description=OpenSSH Server Socket
+Conflicts=sshd.service
+
+[Socket]
+ListenStream=2222
+ListenStream=10.20.30.40:2223
+FreeBind=true
+Accept=yes
+
+[Install]
+WantedBy=sockets.target
+```
+
+```
+sudo systemctl daemon-reload
+```
+
+replace SSH socket for Ubuntu
+
+```
+sudo vi /etc/ssh/sshd_config
+
+sudo systemctl restart ssh
+```
+
 ### initialize docker discovery to the private network.
 
 on all three vms:
