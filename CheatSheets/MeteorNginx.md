@@ -31,7 +31,7 @@ stop on shutdown
 respawn
 respawn limit 10 5
 
-# we don't use buil-in log because we use a script below
+# we don't use built-in log because we use a script below
 # console log
 
 # drop root proviliges and switch to mymetorapp user
