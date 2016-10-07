@@ -25,7 +25,7 @@ server {
 
 # HTTPS Webapp
 server {
-    listen 443 ssl spdy; # we enable SPDY here
+    listen 443 ssl http2; # ngx_http_spdy_module was superseded by ngx_http_v2_module
     server_name webapp.tld; # this domain must match Common Name (CN) in the SSL certificate
 
     root html; # irrelevant
@@ -63,7 +63,7 @@ server {
         proxy_pass http://127.0.0.1:port;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade; # allow websockets
-        proxy_set_header Connection $connection_upgrade;
+        proxy_set_header Connection "upgrade";
         proxy_set_header X-Forwarded-For $remote_addr; # preserve client IP
 	proxy_set_header X-Forwarded-Proto $scheme;
         # this setting allows the browser to cache the application in a way compatible with Meteor
@@ -106,7 +106,9 @@ cat webapp_crt.crt intermediate.crt > webapp.crt
 
 ### Generate a strong dhparam certificate
 
-
+```
+openssl dhparam -out dhparam.pem 4096
+```
 
 ### Generate a CSR and Private Key ###
 
