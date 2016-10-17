@@ -12,13 +12,13 @@ networksecgroup="ampelos-net-sec" #Network Sec Group for VMs
 name="CIWorker1"
 static_IP1="10.1.0.60"
 image="Canonical:UbuntuServer:16.04.0-LTS:16.04.201604203" #Ubuntu image to use `azure vm image list southcentralus canonical ubuntuserver` `azure vm image list`
-size="Standard_A0" #VM Sizes can be listed by using `azure vm sizes --location YourAzureDCLocaitonOfChoice`
+size="Standard_A1" #VM Sizes can be listed by using `azure vm sizes --location YourAzureDCLocaitonOfChoice`
 
 #execute
 azure config mode arm
 
 #Create public IP
-#azure network public-ip create --resource-group $resourcegroup --location $location --name "$name"-pub-ip
+azure network public-ip create --resource-group $resourcegroup --location $location --name "$name"-pub-ip
 
 #Virtual Nics with private IPs
 azure network nic create --resource-group $resourcegroup --subnet-vnet-name $vnetname --subnet-name $subnetname --location $location --name "$name"-priv-nic --private-ip-address $static_IP1 --network-security-group-name $networksecgroup --public-ip-name "$name"-pub-ip
