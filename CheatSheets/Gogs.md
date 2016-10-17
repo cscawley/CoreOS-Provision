@@ -136,7 +136,7 @@ tail /var/log/gogs/stdout.log
 
 confirm
 ```
-2015/03/09 14:24:42 [I] Gogs: Go Git Service x.x.x.x
+2016/10/16 04:50:29 [I] Gogs: Go Git Service x.x.x.x
 ```
 
 # app proxy
