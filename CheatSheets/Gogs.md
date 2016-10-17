@@ -141,7 +141,9 @@ confirm
 
 # app proxy
 
+```
 sudo apt-get -y install nginx
+```
 
 add an nginx server block for our gogs service
 ```
@@ -257,4 +259,5 @@ sudo service supervisor restart
 ## logs
 
 systemctl status nginx.service
+
 tail -f /var/log/gogs/stdout.log
