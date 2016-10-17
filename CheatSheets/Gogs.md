@@ -256,7 +256,7 @@ restart the supervisor
 sudo service supervisor restart
 ```
 
-## logs
+## troubleshoot
 
 systemctl status nginx.service
 
