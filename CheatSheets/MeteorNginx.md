@@ -1,7 +1,5 @@
 # Ampelos Moon Base Server Systems #
 
-# How do I get set up? #
-Get in the web server
 ```
 ssh ampelos
 ```
